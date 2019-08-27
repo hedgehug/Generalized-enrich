@@ -1,0 +1,3 @@
+NAME	GS<br> follow link to MSigDB	GS DETAILS	SIZE	ES	NES	NOM p-val	FDR q-val	FWER p-val	RANK AT MAX	LEADING EDGE	
+IL6_DOWN	IL6_DOWN	Details ...	485	-0.461513	-1.1629395	0.0	0.01	0.01	10644	tags=64%, list=40%, signal=106%	
+IL6_UP	IL6_UP	Details ...	195	-0.38858065	-0.9590966	0.738	0.7785	0.953	13901	tags=71%, list=53%, signal=149%	

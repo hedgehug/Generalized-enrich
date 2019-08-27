@@ -1,0 +1,33 @@
+producer_class	xtools.gsea.Gsea
+producer_timestamp	1566235136155
+param	collapse	false
+param	cls	/Users/luopin/GSEA test/MSC.GSEA.cls#MSC_versus_Control
+param	plot_top_x	20
+param	norm	meandiv
+param	save_rnd_lists	false
+param	median	false
+param	num	100
+param	scoring_scheme	weighted
+param	make_sets	true
+param	mode	Max_probe
+param	gmx	/Users/luopin/GSEA test/IL6.gmx
+param	gui	false
+param	metric	Signal2Noise
+param	rpt_label	MSC_IL6_GSEA
+param	help	false
+param	order	descending
+param	out	/Users/luopin/GSEA test
+param	create_svgs	false
+param	permute	gene_set
+param	rnd_type	no_balance
+param	set_min	15
+param	include_only_symbols	true
+param	sort	real
+param	create_gcts	false
+param	rnd_seed	timestamp
+param	nperm	1000
+param	zip_report	false
+param	set_max	5000
+param	res	/Users/luopin/GSEA test/MSC.GSEA.txt
+
+file	/Users/luopin/GSEA test/MSC_IL6_GSEA.Gsea.1566235136155/index.html
