@@ -1,1 +1,1 @@
-# Generalized-GSEA
+# Generalized Enrichment analysis
