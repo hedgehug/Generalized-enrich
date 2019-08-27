@@ -1,0 +1,8 @@
+TODO list for the project
+
+1. identify leading edge gene set
+2. add heatmap visualization
+3. refine figure quality (dpi)
+4. save parameter setting
+5. save pre-permutation result
+6. multi-processing for permutation test
