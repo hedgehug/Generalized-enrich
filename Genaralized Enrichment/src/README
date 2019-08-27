@@ -1,0 +1,12 @@
+GUI window is named main_frame.java
+
+File loading is implemented by ExpressionFileLoader, which loads a gene expression file (i.e. data/IL6.txt), 
+and GeneListFileLoader, which loads a gene list file (i.e. data/IL6.up.gene)
+
+After files loaded successfully, there's notification, this process may take a few seconds.
+
+Next step is to Run Analysis, the gene statistics is calculated first for every gene and then compare them in
+main_fram.java Compare() function, where a Comparator object will be created
+
+The Comparator class take two objects, one is gene expression, the other one could be GeneListFileLoader or GeneExpression object
+Figures and plots are generated in Comparator
