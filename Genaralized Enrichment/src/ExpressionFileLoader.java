@@ -13,7 +13,7 @@ public class ExpressionFileLoader {
 	private ArrayList<String> sample_name_list_1;
 	private ArrayList<String> sample_name_list_2;
 	private int num_sample;
-	private HashMap<String, HashMap> gene_expression_map;
+	private HashMap<String, HashMap<String, Double>> gene_expression_map;
 	
 	
 	public ExpressionFileLoader(String file_path, String sample_identifier_1, String sample_identifier_2) throws IOException
@@ -38,9 +38,13 @@ public class ExpressionFileLoader {
 		this.sample_dict = null;
 		
 		// <gene_name, <sample_name, expression>>
-		this.gene_expression_map = new HashMap<String, HashMap>();
+		this.gene_expression_map = new HashMap<String, HashMap<String, Double>>();
 	}
 	
+	public HashMap<String, HashMap<String, Double>> getGeneExpressionMap() {
+		return gene_expression_map;
+	}
+
 	public boolean LoadFile()
 	{
 		BufferedReader buf = null;

@@ -22,7 +22,7 @@ public class GeneExpression {
 	// sort in ascending order
 	private ArrayList<String> sorted_gene_list;
 	private ArrayList<Double> sorted_expression_list;
-	private HashMap<String, double[]> gene_expression_map;
+	private HashMap<String, HashMap<String, Double>> gene_expression_map;
 	
 	
 	public GeneExpression(ExpressionFileLoader file_dataset)
@@ -34,7 +34,7 @@ public class GeneExpression {
 		this.gene_list = file_dataset.getGeneList();
 		this.sorted_gene_list = new ArrayList<String> ();
 		this.sorted_expression_list = new ArrayList<Double> ();
-		this.gene_expression_map = new HashMap<String, double[]>();
+		this.gene_expression_map = file_dataset.getGeneExpressionMap();
 		this.sample_name_list_1 = file_dataset.getSampleNameList1();
 		this.sample_name_list_2 = file_dataset.getSampleNameList2();
 		
@@ -146,7 +146,7 @@ public class GeneExpression {
 		return this.gene_num;
 	}
 
-	public HashMap<String, double[]> getGeneExpressionMap() {
+	public HashMap<String, HashMap<String, Double>> getGeneExpressionMap() {
 		return gene_expression_map;
 	}
 	

@@ -149,6 +149,7 @@ public class Comparator
 		// mark the position of max ratio gene 
 		double temp_max_ratio = 0.0;
 		int temp_max_ratio_position = exp_end;
+		int temp_intersection_num = 0;
 		
 		while (exp_end<this.experiment_gene_num)
 		{
@@ -165,6 +166,7 @@ public class Comparator
 			{
 				temp_max_ratio = odds_ratio;
 				temp_max_ratio_position = exp_end;
+				temp_intersection_num = intersection_num;
 			}
 			
 			odds_ratio_list.add(odds_ratio);
@@ -198,7 +200,7 @@ public class Comparator
 			
 			plotSingleLine(gene_position_list, odds_ratio_list, identifier);
 			
-			plotHeatMap(rank_gene_list_1, rank_gene_list_2, temp_max_ratio_position);
+			plotHeatMap(rank_gene_list_1, rank_gene_list_2, temp_max_ratio_position, temp_intersection_num, identifier);
 			
 			// just for return type
 			return temp_max_ratio;
@@ -213,30 +215,105 @@ public class Comparator
 	 * Plot the heatmap for gene set  
 	 */
 	
-	public void plotHeatMap(ArrayList<String> rank_gene_list_1, ArrayList<String> rank_gene_list_2, int coordinate)
+	public void plotHeatMap(ArrayList<String> rank_gene_list_1, ArrayList<String> rank_gene_list_2, int coordinate, int intersection_num, String identifier) throws IOException
 	{
 		
-		ArrayList<ArrayList<Double>> heatmap_data = new ArrayList<ArrayList<Double>>();
+		ArrayList<String> header_list = new ArrayList<String>();
+		
+		
+		//ArrayList<ArrayList<Double>> heatmap_data = new ArrayList<ArrayList<Double>>();
+		HeatChart heatmap = null;
+		
+		
 		
 		if (this.target_gene_list == null)
 		{
 			// if target is gene expression, plot the leading edge
+			header_list.addAll(this.target_expression.getSample_name_list_1());
+			header_list.addAll(this.target_expression.getSample_name_list_2());
+			header_list.addAll(this.experiment_expression.getSample_name_list_1());
+			header_list.addAll(this.experiment_expression.getSample_name_list_2());
+
+			int target_sample_num = this.target_expression.getSample_name_list_1().size()+this.target_expression.getSample_name_list_2().size();
+			int expr_sample_num = this.experiment_expression.getSample_name_list_1().size()+this.experiment_expression.getSample_name_list_2().size();
 			
+			int total_sample_num = target_sample_num+expr_sample_num;
 			
+			double[][] heatmap_data = new double[intersection_num][total_sample_num];
+			String[] intersection_gene_list = new String[intersection_num];
+			//String[] header_list = new String[total_sample_num]		
+			
+			ArrayList<String> leading_gene_list_1 = new ArrayList<String> (rank_gene_list_1.subList(0,  coordinate));
+			ArrayList<String> leading_gene_list_2 = new ArrayList<String> (rank_gene_list_2.subList(0,  coordinate));
+			
+			int index = 0;
+			int count = 0;
+			while (index<coordinate)
+			{
+				String gene = leading_gene_list_1.get(index);
+				if (leading_gene_list_2.contains(gene))
+				{
+					for (int col_index=0; col_index<target_sample_num; col_index++)
+					{
+						heatmap_data[count][col_index] = this.target_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						intersection_gene_list[count] = gene;
+					}
+					for (int col_index=target_sample_num; col_index<total_sample_num; col_index++)
+					{
+						heatmap_data[count][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						intersection_gene_list[count] = gene;
+					}
+					count++;
+				}				
+				index++;
+			}
+			heatmap = new HeatChart(heatmap_data);
+			
+			heatmap.setHighValueColour(Color.RED);
+			heatmap.setLowValueColour(Color.BLUE);
+			heatmap.setChartMargin(100);
+			
+			heatmap.setTitle("Blue-Pink O' Gram");
+			heatmap.setYValues(intersection_gene_list);
+			heatmap.setXValues(header_list.toArray());
+			heatmap.saveToFile(new File(main_frame.work_directory+"/heatmap-"+identifier+".png"));
 		}
 		else
 		{
 			// if target is gene list, plot all genes in the gene list
-		}
-		
-		
-		
-		
-		// get gene expression from all samples
-		
-		
-		
-		// HeatChart heatmap = new HeatChart();
+			header_list.addAll(this.experiment_expression.getSample_name_list_1());
+			header_list.addAll(this.experiment_expression.getSample_name_list_2());
+			
+			int total_sample_num = this.experiment_expression.getSample_name_list_1().size()+this.experiment_expression.getSample_name_list_2().size();
+			
+			double[][] heatmap_data = new double[this.target_gene_list.getGeneList().size()][total_sample_num];
+			String[] intersection_gene_list = new String[this.target_gene_list.getGeneList().size()];
+			int row_index = 0;
+			for (String gene: this.target_gene_list.getGeneList())
+			{
+				if (rank_gene_list_1.contains(gene))
+				{
+					for (int col_index=0; col_index<total_sample_num; col_index++)
+					{
+						heatmap_data[row_index][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						
+					}
+					intersection_gene_list[row_index] = gene;
+					row_index++;
+				}
+			}
+			
+            heatmap = new HeatChart(heatmap_data);
+			
+			heatmap.setHighValueColour(Color.RED);
+			heatmap.setLowValueColour(Color.BLUE);
+			heatmap.setChartMargin(100);
+			
+			heatmap.setTitle("Blue-Pink O' Gram");
+			heatmap.setYValues(intersection_gene_list);
+			heatmap.setXValues(header_list.toArray());
+			heatmap.saveToFile(new File(main_frame.work_directory+"/heatmap-"+identifier+".png"));
+		}		
 	}
 	
 	
