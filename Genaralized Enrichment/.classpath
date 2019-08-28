@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="/Users/luopin/Downloads/jfreechart-1.0.1/lib/jcommon-1.0.0.jar"/>
 	<classpathentry kind="lib" path="/Users/luopin/Downloads/jfreechart-1.0.1/lib/jfreechart-1.0.1.jar"/>
 	<classpathentry kind="lib" path="/Users/luopin/Downloads/jheatchart-0.6/jheatchart-0.6.jar"/>
+	<classpathentry kind="lib" path="/Users/luopin/Downloads/javaml-0.1.7/javaml-0.1.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -26,6 +26,8 @@ import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 import org.tc33.jheatchart.HeatChart;
 
+import net.sf.javaml.utils.ArrayUtils;
+
 
 
 public class Comparator 
@@ -263,6 +265,7 @@ public class Comparator
 						heatmap_data[count][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
 						intersection_gene_list[count] = gene;
 					}
+					ArrayUtils.normalize(heatmap_data[count]);
 					count++;
 				}				
 				index++;
@@ -293,11 +296,13 @@ public class Comparator
 			{
 				if (rank_gene_list_1.contains(gene))
 				{
+					//double[] temp_array = new double [total_sample_num];
 					for (int col_index=0; col_index<total_sample_num; col_index++)
 					{
 						heatmap_data[row_index][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
-						
+						// temp_array[col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
 					}
+					ArrayUtils.normalize(heatmap_data[row_index]);
 					intersection_gene_list[row_index] = gene;
 					row_index++;
 				}
