@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+// import org.apache.commons.lang3.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -241,7 +243,7 @@ public class Comparator
 			
 			int total_sample_num = target_sample_num+expr_sample_num;
 			
-			double[][] heatmap_data = new double[intersection_num][total_sample_num];
+			double[][] heatmap_data = new double[intersection_num][];
 			String[] intersection_gene_list = new String[intersection_num];
 			//String[] header_list = new String[total_sample_num]		
 			
@@ -255,17 +257,24 @@ public class Comparator
 				String gene = leading_gene_list_1.get(index);
 				if (leading_gene_list_2.contains(gene))
 				{
+					double[] temp_1 = new double[target_sample_num];
 					for (int col_index=0; col_index<target_sample_num; col_index++)
 					{
-						heatmap_data[count][col_index] = this.target_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						//heatmap_data[count][col_index] = this.target_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						temp_1[col_index] = this.target_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
 						intersection_gene_list[count] = gene;
 					}
+					ArrayUtils.normalize(temp_1);
+					double[] temp_2 = new double[expr_sample_num];
 					for (int col_index=target_sample_num; col_index<total_sample_num; col_index++)
 					{
-						heatmap_data[count][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						//heatmap_data[count][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						temp_2[col_index-target_sample_num] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
 						intersection_gene_list[count] = gene;
 					}
-					ArrayUtils.normalize(heatmap_data[count]);
+					ArrayUtils.normalize(temp_2);
+					heatmap_data[count] = org.apache.commons.lang3.ArrayUtils.addAll(temp_1,temp_2);
+					//ArrayUtils.normalize(heatmap_data[count]);
 					count++;
 				}				
 				index++;
