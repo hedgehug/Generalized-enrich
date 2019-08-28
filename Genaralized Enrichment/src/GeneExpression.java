@@ -15,23 +15,40 @@ public class GeneExpression {
 	private HashMap<String, double[]> sample_stats_2;
 	private int gene_num;
 	private int sample_num;
+	private ArrayList<String> sample_name_list_1;
+	private ArrayList<String> sample_name_list_2;
+
 	private ArrayList<String> gene_list;
 	// sort in ascending order
 	private ArrayList<String> sorted_gene_list;
 	private ArrayList<Double> sorted_expression_list;
+	private HashMap<String, double[]> gene_expression_map;
 	
 	
 	public GeneExpression(ExpressionFileLoader file_dataset)
 	{
+		// control expression
 		this.sample_stats_1 = Calculate((List<List<Double>>) file_dataset.getExpr1());		
+		// treatment expression
 		this.sample_stats_2 = Calculate((List<List<Double>>) file_dataset.getExpr2());
 		this.gene_list = file_dataset.getGeneList();
 		this.sorted_gene_list = new ArrayList<String> ();
 		this.sorted_expression_list = new ArrayList<Double> ();
+		this.gene_expression_map = new HashMap<String, double[]>();
+		this.sample_name_list_1 = file_dataset.getSampleNameList1();
+		this.sample_name_list_2 = file_dataset.getSampleNameList2();
 		
 		Rank_gene();
 	}
 	
+	public ArrayList<String> getSample_name_list_1() {
+		return sample_name_list_1;
+	}
+
+	public ArrayList<String> getSample_name_list_2() {
+		return sample_name_list_2;
+	}
+
 	public HashMap<String, double[]> Calculate(List<List<Double>> sample_expression)
 	{		
 		this.gene_num = sample_expression.get(0).size();
@@ -127,5 +144,13 @@ public class GeneExpression {
 	public int getGeneNum()
 	{
 		return this.gene_num;
+	}
+
+	public HashMap<String, double[]> getGeneExpressionMap() {
+		return gene_expression_map;
+	}
+	
+	public int getSampleNum() {
+		return sample_num;
 	}
 }

@@ -24,6 +24,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
+import org.tc33.jheatchart.HeatChart;
 
 
 
@@ -147,7 +148,7 @@ public class Comparator
 		
 		// mark the position of max ratio gene 
 		double temp_max_ratio = 0.0;
-		double temp_max_ratio_position = exp_end;
+		int temp_max_ratio_position = exp_end;
 		
 		while (exp_end<this.experiment_gene_num)
 		{
@@ -197,7 +198,7 @@ public class Comparator
 			
 			plotSingleLine(gene_position_list, odds_ratio_list, identifier);
 			
-			plotHeatMap();
+			plotHeatMap(rank_gene_list_1, rank_gene_list_2, temp_max_ratio_position);
 			
 			// just for return type
 			return temp_max_ratio;
@@ -207,6 +208,37 @@ public class Comparator
 			return temp_max_ratio;
 		}
 	}
+	
+	/*
+	 * Plot the heatmap for gene set  
+	 */
+	
+	public void plotHeatMap(ArrayList<String> rank_gene_list_1, ArrayList<String> rank_gene_list_2, int coordinate)
+	{
+		
+		ArrayList<ArrayList<Double>> heatmap_data = new ArrayList<ArrayList<Double>>();
+		
+		if (this.target_gene_list == null)
+		{
+			// if target is gene expression, plot the leading edge
+			
+			
+		}
+		else
+		{
+			// if target is gene list, plot all genes in the gene list
+		}
+		
+		
+		
+		
+		// get gene expression from all samples
+		
+		
+		
+		// HeatChart heatmap = new HeatChart();
+	}
+	
 	
 	
 	/*
