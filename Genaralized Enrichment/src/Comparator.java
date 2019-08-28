@@ -197,6 +197,8 @@ public class Comparator
 			
 			plotSingleLine(gene_position_list, odds_ratio_list, identifier);
 			
+			plotHeatMap();
+			
 			// just for return type
 			return temp_max_ratio;
 		}
@@ -236,6 +238,7 @@ public class Comparator
 	    ChartUtilities.saveChartAsPNG(lineChart ,lineChartObject, width ,height);
 	}
 	
+	
 	public void plotAllComparison() throws IOException
 	{
 		JFreeChart all_lineChartObject = ChartFactory.createLineChart(
@@ -248,8 +251,9 @@ public class Comparator
 	    ChartUtilities.saveChartAsPNG(lineChart , all_lineChartObject, width ,height);
 	}
 	
+	
 	/*
-	 * Do permutation test and calculate significances 
+	 * Conduct permutation test and calculate significances 
 	 */
 	
 	public void permutateTest(ArrayList<String> rank_gene_list_1, ArrayList<String> rank_gene_list_2) throws IOException
