@@ -475,5 +475,22 @@ public class Comparator
 	{
 		return this.significance;
 	}
+	
+	public void writeHTML() throws IOException
+	{
+		BufferedWriter html_writer = new BufferedWriter(new FileWriter(main_frame.work_directory+"/report.html"));
+	    for (int index=0; index<this.permutation_max_ratio_list.length; index++)
+	    {
+	    	// write HTML header
+	    	html_writer.write("<!DOCTYPE html>\n<html>\n<body>\n");
+	    	
+	    	// TODO write the body of HTML, index.html for reference
+	    	
+	    	
+	    	// write HTML footer
+	    	html_writer.write("</body>\n</html>\n");
+	    }
+	    html_writer.close();
+	}
 
 }

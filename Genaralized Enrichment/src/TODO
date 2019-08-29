@@ -1,7 +1,7 @@
 TODO list for the project
 
 1. identify leading edge gene set
-2. add heatmap visualization
+2. add heatmap visualization (need to find a better one)
 3. refine figure quality (dpi)
 4. save parameter setting
 5. save pre-permutation result
@@ -9,3 +9,4 @@ TODO list for the project
 7. multiple gene list analysis
 8. multiple gene comparison analysis
 9. present in HTML
+10. exception handling
