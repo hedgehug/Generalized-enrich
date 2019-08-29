@@ -209,7 +209,7 @@ public class main_frame
 		tabRunAnalysis.add(lblNewLabel_1);
 		
 		permutation_number = new JTextField();
-		permutation_number.setText("1000");
+		permutation_number.setText("100");
 		permutation_number.setBounds(165, 50, 201, 22);
 		tabRunAnalysis.add(permutation_number);
 		permutation_number.setColumns(10);
@@ -324,7 +324,7 @@ public class main_frame
 		tabRunAnalysis.add(lblWindowSize);
 		
 		txtWindowSize = new JTextField();
-		txtWindowSize.setText("10");
+		txtWindowSize.setText("20");
 		txtWindowSize.setBounds(165, 110, 201, 22);
 		tabRunAnalysis.add(txtWindowSize);
 		txtWindowSize.setColumns(10);
@@ -335,7 +335,7 @@ public class main_frame
 		tabRunAnalysis.add(lblInitialWindowSize);
 		
 		txtInitialWindowSize = new JTextField();
-		txtInitialWindowSize.setText("100");
+		txtInitialWindowSize.setText("300");
 		txtInitialWindowSize.setBounds(165, 140, 201, 22);
 		tabRunAnalysis.add(txtInitialWindowSize);
 		txtInitialWindowSize.setColumns(10);

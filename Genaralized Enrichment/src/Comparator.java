@@ -168,6 +168,12 @@ public class Comparator
 		int temp_max_ratio_position = exp_end;
 		int temp_intersection_num = 0;
 		
+		if (tar_end>=this.target_gene_num)
+		{
+			tar_end = this.target_gene_num-1;
+		}
+		
+		
 		while (exp_end<this.experiment_gene_num)
 		{
 			temp_set_1.addAll(rank_gene_list_1.subList(start, exp_end));
@@ -244,6 +250,9 @@ public class Comparator
 		// write to txt file
 		BufferedWriter leading_edge_writer = new BufferedWriter(new FileWriter(main_frame.work_directory+"/leading_edge_gene."+identifier+".txt"));
 		
+		double temp_min = 0.0;
+		double temp_max = 0.0;
+		
 		if (this.target_gene_list == null)
 		{
 			// if target is gene expression, plot the leading edge
@@ -269,8 +278,6 @@ public class Comparator
 			
 			int index = 0;
 			int count = 0;
-			double temp_min = 0.0;
-			double temp_max = 0.0;
 			ArrayList<Double> temp_1 = new ArrayList<Double>();
 			ArrayList<Double> temp_2 = new ArrayList<Double>();
 			while (index<coordinate)
@@ -344,6 +351,8 @@ public class Comparator
 			header_list.addAll(this.experiment_expression.getSample_name_list_1());
 			header_list.addAll(this.experiment_expression.getSample_name_list_2());
 			
+			leading_edge_writer.write("Gene Name\t"+String.join("\t", header_list)+"\n");
+			
 			int total_sample_num = this.experiment_expression.getSample_name_list_1().size()+this.experiment_expression.getSample_name_list_2().size();
 			
 			double[][] heatmap_data = new double[this.target_gene_list.getGeneList().size()][total_sample_num];
@@ -351,15 +360,24 @@ public class Comparator
 			int row_index = 0;
 			for (String gene: this.target_gene_list.getGeneList())
 			{
+				ArrayList<Double> temp_array = new ArrayList<Double>();
+				String[] temp_string = new String[total_sample_num];
 				if (rank_gene_list_1.contains(gene))
-				{
-					//double[] temp_array = new double [total_sample_num];
+				{	
+					leading_edge_writer.write(gene+"\t");
 					for (int col_index=0; col_index<total_sample_num; col_index++)
 					{
-						heatmap_data[row_index][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
-						// temp_array[col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						temp_array.add(this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index)));						
 					}
-					ArrayUtils.normalize(heatmap_data[row_index]);
+					
+					temp_min = Collections.min(temp_array);
+					temp_max = Collections.max(temp_array);
+					for(int i=0; i<temp_array.size(); i++)
+					{
+						heatmap_data[row_index][i] = (temp_array.get(i)-temp_min)/(temp_max - temp_min);
+						temp_string[i] = Double.toString(heatmap_data[row_index][i]);
+					}
+					leading_edge_writer.write(String.join("\t", temp_string)+'\n');
 					intersection_gene_list[row_index] = gene;
 					row_index++;
 				}
