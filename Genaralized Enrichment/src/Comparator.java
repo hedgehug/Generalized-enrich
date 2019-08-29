@@ -2,6 +2,7 @@
 // compare a GeneExpression object with a GeneList object
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Paint;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,20 +13,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 // import org.apache.commons.lang3.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
+import org.jfree.ui.RectangleEdge;
 import org.tc33.jheatchart.HeatChart;
 
 import net.sf.javaml.utils.ArrayUtils;
@@ -52,6 +62,8 @@ public class Comparator
 	
 	private double[] permutation_max_ratio_list;
 	
+	private HashMap<String, Double> max_ratio_comparison;
+	
 	
 	public Comparator(GeneExpression experiment_expression, Object target) throws IOException
 	{
@@ -63,6 +75,7 @@ public class Comparator
 		this.permutation_num = main_frame.num_permutation;
 		this.window_stride = main_frame.window_stride;
 	    this.initial_start = main_frame.initial_window_start;
+	    this.max_ratio_comparison = new HashMap<String, Double>();
 		
 		// initialize figure data set
 		this.all_line_chart_dataset = new DefaultCategoryDataset();
@@ -228,7 +241,8 @@ public class Comparator
 		//ArrayList<ArrayList<Double>> heatmap_data = new ArrayList<ArrayList<Double>>();
 		HeatChart heatmap = null;
 		
-		
+		// write to txt file
+		BufferedWriter leading_edge_writer = new BufferedWriter(new FileWriter(main_frame.work_directory+"/leading_edge_gene."+identifier+".txt"));
 		
 		if (this.target_gene_list == null)
 		{
@@ -243,38 +257,72 @@ public class Comparator
 			
 			int total_sample_num = target_sample_num+expr_sample_num;
 			
-			double[][] heatmap_data = new double[intersection_num][];
+			double[][] heatmap_data = new double[intersection_num][total_sample_num];
 			String[] intersection_gene_list = new String[intersection_num];
 			//String[] header_list = new String[total_sample_num]		
 			
 			ArrayList<String> leading_gene_list_1 = new ArrayList<String> (rank_gene_list_1.subList(0,  coordinate));
 			ArrayList<String> leading_gene_list_2 = new ArrayList<String> (rank_gene_list_2.subList(0,  coordinate));
 			
+			// write header
+			leading_edge_writer.write("Gene Name\t"+String.join("\t", header_list)+"\n");
+			
 			int index = 0;
 			int count = 0;
+			double temp_min = 0.0;
+			double temp_max = 0.0;
+			ArrayList<Double> temp_1 = new ArrayList<Double>();
+			ArrayList<Double> temp_2 = new ArrayList<Double>();
 			while (index<coordinate)
 			{
 				String gene = leading_gene_list_1.get(index);
+				
 				if (leading_gene_list_2.contains(gene))
 				{
-					double[] temp_1 = new double[target_sample_num];
+					// write gene name
+					leading_edge_writer.write(gene+"\t");					
+					
 					for (int col_index=0; col_index<target_sample_num; col_index++)
 					{
-						//heatmap_data[count][col_index] = this.target_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
-						temp_1[col_index] = this.target_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
-						intersection_gene_list[count] = gene;
+						temp_1.add(this.target_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index)));
+						intersection_gene_list[count] = gene;						
 					}
-					ArrayUtils.normalize(temp_1);
-					double[] temp_2 = new double[expr_sample_num];
+					
+					// min-max normalization
+					temp_min = Collections.min(temp_1);
+					temp_max = Collections.max(temp_1);
+					String[] temp_string_1 = new String[target_sample_num];
+					for(int i=0; i<temp_1.size(); i++)
+					{
+						temp_1.set(i, (temp_1.get(i) - temp_min) / (temp_max - temp_min));
+					    temp_string_1[i] = Double.toString(temp_1.get(i));
+					    heatmap_data[count][i] = temp_1.get(i);
+					}						
+						
+					leading_edge_writer.write(String.join("\t", temp_string_1));
+					
 					for (int col_index=target_sample_num; col_index<total_sample_num; col_index++)
 					{
-						//heatmap_data[count][col_index] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
-						temp_2[col_index-target_sample_num] = this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index));
+						temp_2.add(this.experiment_expression.getGeneExpressionMap().get(gene).get(header_list.get(col_index)));
 						intersection_gene_list[count] = gene;
 					}
-					ArrayUtils.normalize(temp_2);
-					heatmap_data[count] = org.apache.commons.lang3.ArrayUtils.addAll(temp_1,temp_2);
-					//ArrayUtils.normalize(heatmap_data[count]);
+					//ArrayUtils.normalize(temp_2);
+					// min-max normalization
+					temp_min = Collections.min(temp_2);
+					temp_max = Collections.max(temp_2);
+					String[] temp_string_2 = new String[expr_sample_num];
+					for(int i=0; i<temp_2.size(); i++)
+					{
+						temp_2.set(i, (temp_2.get(i) - temp_min) / (temp_max - temp_min));
+					    temp_string_2[i] = String.valueOf(temp_2.get(i));
+					    heatmap_data[count][i+temp_1.size()] = temp_2.get(i);
+					}						
+						
+					leading_edge_writer.write(String.join("\t", temp_string_2)+'\n');
+					
+					temp_1 = new ArrayList<Double>();
+					temp_2 = new ArrayList<Double>();
+
 					count++;
 				}				
 				index++;
@@ -327,7 +375,8 @@ public class Comparator
 			heatmap.setYValues(intersection_gene_list);
 			heatmap.setXValues(header_list.toArray());
 			heatmap.saveToFile(new File(main_frame.work_directory+"/heatmap-"+identifier+".png"));
-		}		
+		}	
+		leading_edge_writer.close();
 	}
 	
 	
@@ -339,6 +388,7 @@ public class Comparator
 	
 	public void plotSingleLine(ArrayList<Integer> x_coordinate, ArrayList<Double> y_coordinate, String identifier) throws IOException
 	{
+		double temp_max_ratio = Collections.max(y_coordinate);
 		DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
 		int point_num = x_coordinate.size();
 		
@@ -355,10 +405,28 @@ public class Comparator
 		
 		// TODO refine the figure quality, maybe change dpi
 		
+		// change the font
+		CategoryPlot plot = lineChartObject.getCategoryPlot();
+		CategoryAxis x_axis = plot.getDomainAxis();
+		x_axis.setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		x_axis.setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		plot.getRangeAxis().setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		plot.getRangeAxis().setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		
+		// change ticks
+		NumberAxis y_axis = (NumberAxis)plot.getRangeAxis(); 
+		y_axis.setTickUnit(new NumberTickUnit(1)); 
+		
 		int width = 1000;    /* Width of the image */
 	    int height = 800;   /* Height of the image */ 
+	    lineChartObject.removeLegend();
+	    TextTitle legendText = new TextTitle("Max Ratio = "+Double.toString(temp_max_ratio));
+	    legendText.setPosition(RectangleEdge.BOTTOM);
+	    lineChartObject.addSubtitle(legendText);
 	    File lineChart = new File(main_frame.work_directory+"/"+identifier+".png"); 
 	    ChartUtilities.saveChartAsPNG(lineChart ,lineChartObject, width ,height);
+	    
+	    this.max_ratio_comparison.put(identifier, temp_max_ratio);
 	}
 	
 	
@@ -370,7 +438,31 @@ public class Comparator
 		         true,true,false);
 		int width = 1000;    /* Width of the image */
 	    int height = 800;   /* Height of the image */ 
-	    File lineChart = new File(main_frame.work_directory+"/all_result.png"); 
+	    
+	    // change font, ticks
+	    CategoryPlot plot = all_lineChartObject.getCategoryPlot();
+		CategoryAxis x_axis = plot.getDomainAxis();
+		x_axis.setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		x_axis.setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		plot.getRangeAxis().setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		plot.getRangeAxis().setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		NumberAxis y_axis = (NumberAxis)plot.getRangeAxis(); 
+		y_axis.setTickUnit(new NumberTickUnit(1));   
+	    
+	    
+	    // add customized legend
+	    //all_lineChartObject.removeLegend();
+	    String temp_legned = "Max ratio = "+Double.toString(this.max_ratio);
+	    TextTitle legendText = new TextTitle(temp_legned);
+	    legendText.setPosition(RectangleEdge.BOTTOM);
+	    all_lineChartObject.addSubtitle(legendText);
+	    temp_legned = "p-value = "+Double.toString(this.significance);
+	    legendText = new TextTitle(temp_legned);
+	    legendText.setPosition(RectangleEdge.BOTTOM);
+	    all_lineChartObject.addSubtitle(legendText);	    
+	    
+	    
+	    File lineChart = new File(main_frame.work_directory+"/all_result.png");
 	    ChartUtilities.saveChartAsPNG(lineChart , all_lineChartObject, width ,height);
 	}
 	
@@ -459,7 +551,7 @@ public class Comparator
 	    writer.close();
 	    
 	    int counter = 0;
-	    while (this.permutation_max_ratio_list[counter]<this.max_ratio)
+	    while (counter<this.permutation_max_ratio_list.length && this.permutation_max_ratio_list[counter]<this.max_ratio)
 	    {
 	    	counter++;
 	    }
@@ -485,7 +577,7 @@ public class Comparator
 	    	html_writer.write("<!DOCTYPE html>\n<html>\n<body>\n");
 	    	
 	    	// TODO write the body of HTML, index.html for reference
-	    	
+	    	html_writer.write("<h1>Result of Generalized Gene Set Enrichment Analysis</h1>");
 	    	
 	    	// write HTML footer
 	    	html_writer.write("</body>\n</html>\n");

@@ -1,6 +1,6 @@
 TODO list for the project
 
-1. identify leading edge gene set
+1. identify leading edge gene set (done)
 2. add heatmap visualization (need to find a better one)
 3. refine figure quality (dpi)
 4. save parameter setting
@@ -10,3 +10,6 @@ TODO list for the project
 8. multiple gene comparison analysis
 9. present in HTML
 10. exception handling
+11. write leading edge gene set to filed
+12. font, axis in plots
+13. default parameter

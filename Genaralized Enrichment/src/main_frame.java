@@ -239,10 +239,10 @@ public class main_frame
 			public void actionPerformed(ActionEvent e) 
 			{
 				// TODO remain to be fixed
-				String temp_work_dir = "";
+				String temp_work_dir = work_directory;
 				if(work_directory.contains(" "))
 				{
-					temp_work_dir = work_directory.replace(" ", "\\ ");
+					//temp_work_dir = work_directory.replace(" ", "\\ ");
 				}
 				String command = "/usr/bin/open "+temp_work_dir;
 				ProcessBuilder processBuilder = new ProcessBuilder();
