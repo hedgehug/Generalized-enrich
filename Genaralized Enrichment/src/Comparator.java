@@ -60,7 +60,7 @@ public class Comparator
 	private int experiment_gene_num;
 	private int target_gene_num;
 	
-	private DefaultCategoryDataset all_line_chart_dataset;
+	private XYSeriesCollection all_line_chart_dataset;
 	private HistogramDataset permutation_dataset;
 	
 	private double[] permutation_max_ratio_list;
@@ -84,7 +84,7 @@ public class Comparator
 	    this.font = new Font("TimesRoman", Font.BOLD, 20);
 		
 		// initialize figure data set
-		this.all_line_chart_dataset = new DefaultCategoryDataset();
+		this.all_line_chart_dataset = new XYSeriesCollection();
 		
 		
 		if(target instanceof GeneExpression)
@@ -422,10 +422,11 @@ public class Comparator
 		{
 			series.add(x_coordinate.get(index), y_coordinate.get(index));
 			//line_chart_dataset.addValue(y_coordinate.get(index), identifier, x_coordinate.get(index));
-			this.all_line_chart_dataset.addValue(y_coordinate.get(index), identifier, x_coordinate.get(index));;
+			// this.all_line_chart_dataset.addValue(y_coordinate.get(index), identifier, x_coordinate.get(index));;
 		}
 		
 		line_chart_dataset.addSeries(series);
+		this.all_line_chart_dataset.addSeries(series);
 		
 		JFreeChart lineChartObject = ChartFactory.createXYLineChart(
 				 identifier, "Gene Number", "Odds Ratio",
@@ -465,22 +466,26 @@ public class Comparator
 	
 	public void plotAllComparison() throws IOException
 	{
-		JFreeChart all_lineChartObject = ChartFactory.createLineChart(
+		JFreeChart all_lineChartObject = ChartFactory.createXYLineChart(
 				 "Enrichment", "Gene Number", "Odds Ratio",
 				 this.all_line_chart_dataset,PlotOrientation.VERTICAL,
 		         true,true,false);
 		int width = 1000;    /* Width of the image */
 	    int height = 800;   /* Height of the image */ 
 	    
-	    // change font, ticks
-	    CategoryPlot plot = all_lineChartObject.getCategoryPlot();
-		CategoryAxis x_axis = plot.getDomainAxis();
-		x_axis.setLabelFont(this.font);
-		x_axis.setTickLabelFont(this.font);
-		plot.getRangeAxis().setLabelFont(this.font);
-		plot.getRangeAxis().setTickLabelFont(this.font);
-		NumberAxis y_axis = (NumberAxis)plot.getRangeAxis(); 
-		y_axis.setTickUnit(new NumberTickUnit(1));   
+	    // change font
+	    XYPlot xyplot = (XYPlot) all_lineChartObject.getXYPlot();
+		xyplot.getDomainAxis().setLabelFont(font);
+		xyplot.getDomainAxis().setTickLabelFont(this.font);
+		xyplot.getRangeAxis().setLabelFont(this.font);
+		xyplot.getRangeAxis().setTickLabelFont(this.font);
+		
+		// change ticks
+		NumberAxis y_axis = (NumberAxis) xyplot.getRangeAxis(); 
+		y_axis.setTickUnit(new NumberTickUnit(1)); 				
+				
+		NumberAxis x_axis = (NumberAxis) xyplot.getDomainAxis();  
+		x_axis.setTickUnit(new NumberTickUnit(2000));
 	    
 	    
 	    // add customized legend
