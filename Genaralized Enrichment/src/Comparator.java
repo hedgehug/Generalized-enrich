@@ -36,6 +36,8 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
 import org.tc33.jheatchart.HeatChart;
 
@@ -411,16 +413,21 @@ public class Comparator
 	public void plotSingleLine(ArrayList<Integer> x_coordinate, ArrayList<Double> y_coordinate, String identifier) throws IOException
 	{
 		double temp_max_ratio = Collections.max(y_coordinate);
-		DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+		XYSeriesCollection line_chart_dataset = new XYSeriesCollection();
 		int point_num = x_coordinate.size();
+		
+		XYSeries series= new XYSeries(identifier);
 		
 		for (int index=0; index<point_num; index++)
 		{
-			line_chart_dataset.addValue(y_coordinate.get(index), identifier, x_coordinate.get(index));
+			series.add(x_coordinate.get(index), y_coordinate.get(index));
+			//line_chart_dataset.addValue(y_coordinate.get(index), identifier, x_coordinate.get(index));
 			this.all_line_chart_dataset.addValue(y_coordinate.get(index), identifier, x_coordinate.get(index));;
 		}
 		
-		JFreeChart lineChartObject = ChartFactory.createLineChart(
+		line_chart_dataset.addSeries(series);
+		
+		JFreeChart lineChartObject = ChartFactory.createXYLineChart(
 				 identifier, "Gene Number", "Odds Ratio",
 		         line_chart_dataset,PlotOrientation.VERTICAL,
 		         true,true,false);
@@ -428,16 +435,20 @@ public class Comparator
 		// TODO refine the figure quality, maybe change dpi
 		
 		// change the font
-		CategoryPlot plot = lineChartObject.getCategoryPlot();
-		CategoryAxis x_axis = plot.getDomainAxis();
-		x_axis.setLabelFont(this.font);
-		x_axis.setTickLabelFont(this.font);
-		plot.getRangeAxis().setLabelFont(this.font);
-		plot.getRangeAxis().setTickLabelFont(this.font);
+		XYPlot xyplot = (XYPlot) lineChartObject.getXYPlot();
+		xyplot.getDomainAxis().setLabelFont(font);
+		xyplot.getDomainAxis().setTickLabelFont(this.font);
+		xyplot.getRangeAxis().setLabelFont(this.font);
+		xyplot.getRangeAxis().setTickLabelFont(this.font);
 		
 		// change ticks
-		NumberAxis y_axis = (NumberAxis)plot.getRangeAxis(); 
+		NumberAxis y_axis = (NumberAxis) xyplot.getRangeAxis(); 
 		y_axis.setTickUnit(new NumberTickUnit(1)); 
+				
+				
+		NumberAxis x_axis = (NumberAxis) xyplot.getDomainAxis();  
+		x_axis.setTickUnit(new NumberTickUnit(2000));
+		
 		
 		int width = 1000;    /* Width of the image */
 	    int height = 800;   /* Height of the image */ 
