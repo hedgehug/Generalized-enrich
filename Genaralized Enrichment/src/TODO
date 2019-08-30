@@ -13,4 +13,5 @@ TODO list for the project
 11. write leading edge gene set to file (done)
 12. font, axis in plots
 13. default parameter change (done)
-14. update all line plot to XYlineplot
+14. update all line plot to XYlineplot (done)
+15. mark the max ratio point
