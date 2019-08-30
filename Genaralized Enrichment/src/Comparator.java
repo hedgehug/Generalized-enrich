@@ -25,6 +25,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.TickUnitSource;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
@@ -64,6 +65,8 @@ public class Comparator
 	
 	private HashMap<String, Double> max_ratio_comparison;
 	
+	public static Font font;
+	
 	
 	public Comparator(GeneExpression experiment_expression, Object target) throws IOException
 	{
@@ -76,6 +79,7 @@ public class Comparator
 		this.window_stride = main_frame.window_stride;
 	    this.initial_start = main_frame.initial_window_start;
 	    this.max_ratio_comparison = new HashMap<String, Double>();
+	    this.font = new Font("TimesRoman", Font.BOLD, 20);
 		
 		// initialize figure data set
 		this.all_line_chart_dataset = new DefaultCategoryDataset();
@@ -306,7 +310,7 @@ public class Comparator
 					    heatmap_data[count][i] = temp_1.get(i);
 					}						
 						
-					leading_edge_writer.write(String.join("\t", temp_string_1));
+					leading_edge_writer.write(String.join("\t", temp_string_1)+"\t");
 					
 					for (int col_index=target_sample_num; col_index<total_sample_num; col_index++)
 					{
@@ -426,10 +430,10 @@ public class Comparator
 		// change the font
 		CategoryPlot plot = lineChartObject.getCategoryPlot();
 		CategoryAxis x_axis = plot.getDomainAxis();
-		x_axis.setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
-		x_axis.setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
-		plot.getRangeAxis().setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
-		plot.getRangeAxis().setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		x_axis.setLabelFont(this.font);
+		x_axis.setTickLabelFont(this.font);
+		plot.getRangeAxis().setLabelFont(this.font);
+		plot.getRangeAxis().setTickLabelFont(this.font);
 		
 		// change ticks
 		NumberAxis y_axis = (NumberAxis)plot.getRangeAxis(); 
@@ -460,10 +464,10 @@ public class Comparator
 	    // change font, ticks
 	    CategoryPlot plot = all_lineChartObject.getCategoryPlot();
 		CategoryAxis x_axis = plot.getDomainAxis();
-		x_axis.setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
-		x_axis.setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
-		plot.getRangeAxis().setLabelFont(new Font("TimesRoman", Font.BOLD, 25));
-		plot.getRangeAxis().setTickLabelFont(new Font("TimesRoman", Font.BOLD, 25));
+		x_axis.setLabelFont(this.font);
+		x_axis.setTickLabelFont(this.font);
+		plot.getRangeAxis().setLabelFont(this.font);
+		plot.getRangeAxis().setTickLabelFont(this.font);
 		NumberAxis y_axis = (NumberAxis)plot.getRangeAxis(); 
 		y_axis.setTickUnit(new NumberTickUnit(1));   
 	    
@@ -541,6 +545,7 @@ public class Comparator
         paintArray[0] = new Color(0x800000ff, true);
 				
 		permutation_histogram.removeLegend();
+				
 		int width = 1000;    /* Width of the image */
 	    int height = 800;   /* Height of the image */ 
 	    ValueMarker marker = new ValueMarker(this.max_ratio);
@@ -555,6 +560,17 @@ public class Comparator
 	            DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
 	    
 	    plot.addDomainMarker(marker);
+	    
+	    plot.getDomainAxis().setTickLabelFont(this.font);
+	    plot.getDomainAxis().setLabelFont(this.font);
+	   
+	    NumberAxis y_axis = (NumberAxis) plot.getRangeAxis(); 
+		y_axis.setTickUnit(new NumberTickUnit(0.1));
+		//y_axis.setFixedAutoRange(1);
+		y_axis.setLabelFont(this.font);
+		y_axis.setTickLabelFont(this.font);
+	    
+	    
 	    
 	    File hist = new File(main_frame.work_directory+"/permutation_result.png"); 
 	    ChartUtilities.saveChartAsPNG(hist , permutation_histogram, width ,height);

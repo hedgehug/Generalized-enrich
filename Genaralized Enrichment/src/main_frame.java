@@ -242,18 +242,15 @@ public class main_frame
 				String temp_work_dir = work_directory;
 				if(work_directory.contains(" "))
 				{
-					//temp_work_dir = work_directory.replace(" ", "\\ ");
+					temp_work_dir = work_directory.replace(" ", "\\ ");
 				}
-				String command = "/usr/bin/open "+temp_work_dir;
-				ProcessBuilder processBuilder = new ProcessBuilder();
-				processBuilder.command(command);
+				String[] command = {"/usr/bin/open", temp_work_dir};
 				try {
-					Process process = processBuilder.start();
-				} catch (IOException e1) {
+					Process p = Runtime.getRuntime().exec(command);
+				} catch (IOException e2) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					e2.printStackTrace();
 				}
-				// process.waitFor();
 			}
 		});
 		btnOpen.setBounds(543, 64, 117, 29);
