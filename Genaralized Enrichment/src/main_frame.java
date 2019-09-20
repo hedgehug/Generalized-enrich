@@ -421,16 +421,14 @@ public class main_frame
 		if (!this.is_gene_list)
 		{
 			// target input is expression file
-			this.comparator = new Comparator(this.experiment_gene_expression, this.target_gene_expression);				   
-			this.max_ratio = this.comparator.getMaxRatio();
-			this.significance = this.comparator.getSignificance();			
+			this.comparator = new Comparator(this.experiment_gene_expression, this.target_gene_expression);				   				
 		}
 		else
 		{
 			// target input is gene list
 			this.comparator = new Comparator(this.experiment_gene_expression, this.target_gene_list);		
-			this.max_ratio = this.comparator.getMaxRatio();
-			this.significance = this.comparator.getSignificance();
 		}
+		this.max_ratio = this.comparator.getMaxRatio();
+		this.significance = this.comparator.getSignificance();	
 	}
 }

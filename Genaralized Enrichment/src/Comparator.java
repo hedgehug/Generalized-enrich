@@ -546,6 +546,7 @@ public class Comparator
 		{
 			for (int round=0; round<this.permutation_num; round++)
 			{
+				System.out.print(String.valueOf(round)+"\n");
 				Collections.shuffle(temp_gene_list_1);
 				this.permutation_max_ratio_list[round] = Compare(temp_gene_list_1, temp_gene_list_2, false, Integer.toString(round));
 			}
