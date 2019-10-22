@@ -100,8 +100,8 @@ public class ExpressionFileLoader {
 	                // add gene expression
 	                for (int col_index=1; col_index<expression_line.length; col_index++)
 	                {
-	                	temp_all_sample_expression.get(col_index-1).add(Double.valueOf(expression_line[col_index]));
-	                	this.gene_expression_map.get(expression_line[0]).put(header_list.get(col_index-1), Double.valueOf(expression_line[col_index]));
+	                	temp_all_sample_expression.get(col_index-1).add(Double.valueOf(expression_line[col_index])+1);
+	                	this.gene_expression_map.get(expression_line[0]).put(header_list.get(col_index-1), Double.valueOf(expression_line[col_index])+1);
 	                }
 	            }
 				newLine = buf.readLine();

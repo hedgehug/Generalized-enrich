@@ -179,6 +179,13 @@ public class Comparator
 			tar_end = this.target_gene_num-1;
 		}
 		
+		HashMap<String, Integer> weight_dictionary_1 = new HashMap<String, Integer>();
+		HashMap<String, Integer> weight_dictionary_2 = new HashMap<String, Integer>();
+		// initialize weight dict
+		for (int i=0; i<rank_gene_list_1.size();i++)
+			weight_dictionary_1.put(rank_gene_list_1.get(i), (rank_gene_list_1.size()-i));
+		for (int i=0; i<rank_gene_list_2.size();i++)
+			weight_dictionary_2.put(rank_gene_list_2.get(i), (rank_gene_list_2.size()-i));
 		
 		while (exp_end<this.experiment_gene_num)
 		{
@@ -190,6 +197,17 @@ public class Comparator
 			int intersection_num = temp_set_1.size();
 					
 			double odds_ratio = (double)intersection_num / ((double)exp_end / (double)this.experiment_gene_num * (double)exp_end);
+			int weight = 0;
+			for (String inter_gene : temp_set_1)
+			{
+				weight += weight_dictionary_1.get(inter_gene);
+				weight += weight_dictionary_2.get(inter_gene);
+			}
+			odds_ratio *= (Math.log((double) weight)/Math.log(2));
+			
+			
+			// assign linear weight to odds ratio
+			
 			
 			if (odds_ratio >= temp_max_ratio)
 			{
@@ -272,6 +290,10 @@ public class Comparator
 			
 			int total_sample_num = target_sample_num+expr_sample_num;
 			
+			// show top 200 
+			if (intersection_num > 200)
+				intersection_num = 200;
+			
 			double[][] heatmap_data = new double[intersection_num][total_sample_num];
 			String[] intersection_gene_list = new String[intersection_num];
 			//String[] header_list = new String[total_sample_num]		
@@ -282,16 +304,21 @@ public class Comparator
 			// write header
 			leading_edge_writer.write("Gene Name\t"+String.join("\t", header_list)+"\n");
 			
+
+			
 			int index = 0;
 			int count = 0;
 			ArrayList<Double> temp_1 = new ArrayList<Double>();
 			ArrayList<Double> temp_2 = new ArrayList<Double>();
-			while (index<coordinate)
+			while (index<coordinate && count < intersection_num)
 			{
 				String gene = leading_gene_list_1.get(index);
 				
 				if (leading_gene_list_2.contains(gene))
-				{
+				{					
+					temp_1 = new ArrayList<Double>();
+					temp_2 = new ArrayList<Double>();
+					
 					// write gene name
 					leading_edge_writer.write(gene+"\t");					
 					
@@ -332,9 +359,7 @@ public class Comparator
 					}						
 						
 					leading_edge_writer.write(String.join("\t", temp_string_2)+'\n');
-					
-					temp_1 = new ArrayList<Double>();
-					temp_2 = new ArrayList<Double>();
+
 
 					count++;
 				}				
@@ -346,7 +371,7 @@ public class Comparator
 			heatmap.setLowValueColour(Color.BLUE);
 			heatmap.setChartMargin(100);
 			
-			heatmap.setTitle("Blue-Pink O' Gram");
+			heatmap.setTitle(identifier);
 			heatmap.setYValues(intersection_gene_list);
 			heatmap.setXValues(header_list.toArray());
 			heatmap.saveToFile(new File(main_frame.work_directory+"/heatmap-"+identifier+".png"));
