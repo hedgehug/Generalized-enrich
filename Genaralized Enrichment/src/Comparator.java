@@ -249,13 +249,8 @@ public class Comparator
 			
 			plotHeatMap(rank_gene_list_1, rank_gene_list_2, temp_max_ratio_position, temp_intersection_num, identifier);
 			
-			// just for return type
-			return temp_max_ratio;
 		}
-		else
-		{
-			return temp_max_ratio;
-		}
+		return temp_max_ratio;
 	}
 	
 	/*
