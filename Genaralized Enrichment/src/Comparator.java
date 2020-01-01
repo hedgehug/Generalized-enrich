@@ -157,7 +157,6 @@ public class Comparator
 	 * the initial size of window and stride of the window extension each time are defined by user
 	 * plot the result if required
 	 */
-	
 	public double Compare(ArrayList<String> rank_gene_list_1, ArrayList<String> rank_gene_list_2, boolean if_plotted, String identifier) throws IOException
 	{
 		Set<String> temp_set_1 = new HashSet<String>();
